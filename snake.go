@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
 
 	"github.com/faiface/pixel"
@@ -64,11 +63,6 @@ func NewSnake() *Snake {
 		Section{Position: pixel.V(0.0, -tileSize*2), Direction: north},
 	}
 	sprites := make(map[string]*pixel.Sprite)
-	spritesheet, err := loadPicture("snake.png")
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
 
 	sprites["tail"] = pixel.NewSprite(spritesheet, pixel.R(0, 24, 8, 32))
 	sprites["straight"] = pixel.NewSprite(spritesheet, pixel.R(8, 24, 16, 32))

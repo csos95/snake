@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"math/rand"
 
 	"github.com/faiface/pixel"
@@ -18,12 +17,6 @@ func NewApple() *Apple {
 	x := float64(rand.Intn(24)-12) * tileSize
 	y := float64(rand.Intn(24)-12) * tileSize
 	position := pixel.V(x, y)
-
-	spritesheet, err := loadPicture("snake.png")
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
 
 	sprite := pixel.NewSprite(spritesheet, pixel.R(16, 16, 24, 24))
 

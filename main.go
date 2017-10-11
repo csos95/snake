@@ -13,15 +13,16 @@ import (
 )
 
 var (
-	win        *pixelgl.Window
-	snake      *Snake
-	apple      *Apple
-	dt         float64
-	moveDelay  int64 = 300000000
-	tileSize         = 32.0
-	pixelScale       = 4.0
-	openSpots  []pixel.Vec
-	gameOver   bool
+	win         *pixelgl.Window
+	spritesheet pixel.Picture
+	snake       *Snake
+	apple       *Apple
+	dt          float64
+	moveDelay   int64 = 300000000
+	tileSize          = 32.0
+	pixelScale        = 4.0
+	openSpots   []pixel.Vec
+	gameOver    bool
 )
 
 func run() {
@@ -33,6 +34,11 @@ func run() {
 
 	var err error
 	win, err = pixelgl.NewWindow(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	spritesheet, err = loadPicture("snake.png")
 	if err != nil {
 		log.Fatal(err)
 	}
