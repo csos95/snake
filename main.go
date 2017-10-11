@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 	"golang.org/x/image/colornames"
+	"golang.org/x/image/font/basicfont"
 )
 
 var (
@@ -18,6 +21,7 @@ var (
 	tileSize         = 32.0
 	pixelScale       = 4.0
 	openSpots  []pixel.Vec
+	GameOver   bool
 )
 
 func run() {
@@ -35,6 +39,10 @@ func run() {
 
 	snake = NewSnake()
 	apple = NewApple()
+
+	basicAtlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
+	basicTxt := text.New(pixel.V(-124.0, 0.0), basicAtlas)
+	fmt.Fprintln(basicTxt, "Game Over")
 
 	var background = colornames.Forestgreen
 	last := time.Now()
@@ -65,6 +73,10 @@ func run() {
 
 		snake.Render()
 		apple.Render()
+
+		if GameOver {
+			basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 4))
+		}
 
 		win.Update()
 	}

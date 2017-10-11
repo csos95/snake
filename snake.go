@@ -81,6 +81,9 @@ func NewSnake() *Snake {
 
 // Update the snakes position
 func (s *Snake) Update() {
+	if GameOver {
+		return
+	}
 	// move all sections forward one
 	// each sections gets the position and direction of the section ahead of it
 	// the head section gets position infront of it
@@ -119,6 +122,7 @@ func (s *Snake) Update() {
 		s.Head.Position.X < win.Bounds().Min.X ||
 		s.Head.Position.Y < win.Bounds().Min.Y {
 		fmt.Println("Game Over! (out of bounds)")
+		GameOver = true
 	}
 
 	// apple check
@@ -130,6 +134,7 @@ func (s *Snake) Update() {
 	for _, section := range s.Sections[1:] {
 		if s.Head.Position.X == section.Position.X && s.Head.Position.Y == section.Position.Y {
 			fmt.Println("Game Over! (suicide)")
+			GameOver = true
 		}
 	}
 
