@@ -38,6 +38,7 @@ func (a *Apple) Render() {
 	a.Sprite.Draw(win, mat)
 }
 
+// Regen the apple (give it a new location)
 func (a *Apple) Regen() {
 	x := float64(rand.Intn(24)-12) * tileSize
 	y := float64(rand.Intn(24)-12) * tileSize

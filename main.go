@@ -14,8 +14,9 @@ var (
 	snake      *Snake
 	apple      *Apple
 	dt         float64
-	tileSize   = 32.0
-	pixelScale = 4.0
+	moveDelay  int64 = 300000000
+	tileSize         = 32.0
+	pixelScale       = 4.0
 	openSpots  []pixel.Vec
 )
 
@@ -37,11 +38,7 @@ func run() {
 
 	var background = colornames.Forestgreen
 	last := time.Now()
-	var moveDelay int64 = 300000000
 	for !win.Closed() {
-		// dt = time.Since(last).Seconds()
-		// last = time.Now()
-
 		win.Clear(background)
 
 		// 1 000 000 000ns = 1s
@@ -62,14 +59,8 @@ func run() {
 		if win.JustPressed(pixelgl.KeyLeft) {
 			snake.Turn(west)
 		}
-		if win.JustPressed(pixelgl.KeyQ) {
-			moveDelay = moveDelay - 10000000
-		}
 		if win.JustPressed(pixelgl.KeyEscape) {
 			win.SetClosed(true)
-		}
-		if win.JustPressed(pixelgl.KeyG) {
-			snake.Grow()
 		}
 
 		snake.Render()

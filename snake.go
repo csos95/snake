@@ -41,6 +41,7 @@ const (
 	left is south(3) +1
 */
 
+// Section of the snake
 type Section struct {
 	Position  pixel.Vec
 	Direction int
@@ -201,8 +202,10 @@ func (s *Snake) Eat() {
 	fmt.Println("apple eaten!")
 	apple.Regen()
 	s.Grow()
+	moveDelay = moveDelay - 5000000
 }
 
+// Grow the snake on the next update
 func (s *Snake) Grow() {
 	s.GrowNextUpdate = true
 }
