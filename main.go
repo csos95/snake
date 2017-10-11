@@ -16,12 +16,13 @@ var (
 	dt         float64
 	tileSize   = 32.0
 	pixelScale = 4.0
+	openSpots  []pixel.Vec
 )
 
 func run() {
 	cfg := pixelgl.WindowConfig{
 		Title:  "Snake by Christopher Silva",
-		Bounds: pixel.R(-400.0, -400.0, 400.0, 400.0),
+		Bounds: pixel.R(-tileSize*12, -tileSize*12, tileSize*12, tileSize*12),
 		VSync:  true,
 	}
 

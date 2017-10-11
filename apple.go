@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math/rand"
 
 	"github.com/faiface/pixel"
 )
@@ -14,7 +15,9 @@ type Apple struct {
 
 // NewApple creates a new apple
 func NewApple() *Apple {
-	position := pixel.V(32.0, 32.0)
+	x := float64(rand.Intn(24)-12) * tileSize
+	y := float64(rand.Intn(24)-12) * tileSize
+	position := pixel.V(x, y)
 
 	spritesheet, err := loadPicture("snake.png")
 	if err != nil {
@@ -36,5 +39,7 @@ func (a *Apple) Render() {
 }
 
 func (a *Apple) Regen() {
-	a.Position = pixel.V(64.0, 64.0)
+	x := float64(rand.Intn(24)-12) * tileSize
+	y := float64(rand.Intn(24)-12) * tileSize
+	a.Position = pixel.V(x, y)
 }

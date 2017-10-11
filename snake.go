@@ -59,10 +59,8 @@ type Snake struct {
 func NewSnake() *Snake {
 	sections := []Section{
 		Section{Position: pixel.V(0.0, 0.0), Direction: north},
-		Section{Position: pixel.V(0.0, -32.0), Direction: north},
-		Section{Position: pixel.V(0.0, -64.0), Direction: north},
-		Section{Position: pixel.V(0.0, -96.0), Direction: north},
-		Section{Position: pixel.V(0.0, -128.0), Direction: north},
+		Section{Position: pixel.V(0.0, -tileSize), Direction: north},
+		Section{Position: pixel.V(0.0, -tileSize*2), Direction: north},
 	}
 	sprites := make(map[string]*pixel.Sprite)
 	spritesheet, err := loadPicture("snake.png")
@@ -85,7 +83,7 @@ func (s *Snake) Update() {
 	// move all sections forward one
 	// each sections gets the position and direction of the section ahead of it
 	// the head section gets position infront of it
-	// check if head intersects apple, if so eat it
+	// if the snake should grow, do it after moving positions forward one
 	var newSection *Section
 	if s.GrowNextUpdate {
 		newSection = &Section{Position: s.Sections[len(s.Sections)-1].Position, Direction: s.Sections[len(s.Sections)-1].Direction}
@@ -111,10 +109,8 @@ func (s *Snake) Update() {
 	case west:
 		s.Head.Position = s.Head.Position.Add(pixel.V(-tileSize, 0.0))
 	}
-	// check if head is out of bounds, over an apple, or over itself
-	// bounds - check head position vs win.bounds
-	// apple - check head position vs apple position
-	// self - loop through section positions vs head position
+
+	// fill slice of open spots
 
 	// bounds check
 	if s.Head.Position.X > win.Bounds().Max.X ||
@@ -124,10 +120,12 @@ func (s *Snake) Update() {
 		fmt.Println("Game Over! (out of bounds)")
 	}
 
+	// apple check
 	if s.Head.Position.X == apple.Position.X && s.Head.Position.Y == apple.Position.Y {
 		s.Eat()
 	}
 
+	// suicide check
 	for _, section := range s.Sections[1:] {
 		if s.Head.Position.X == section.Position.X && s.Head.Position.Y == section.Position.Y {
 			fmt.Println("Game Over! (suicide)")
