@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math"
 
@@ -49,6 +50,7 @@ type Section struct {
 type Snake struct {
 	NextDirection  int
 	GrowNextUpdate bool
+	Head           *Section
 	Sections       []Section
 	Sprites        map[string]*pixel.Sprite
 }
@@ -75,7 +77,7 @@ func NewSnake() *Snake {
 	sprites["head"] = pixel.NewSprite(spritesheet, pixel.R(24, 24, 32, 32))
 	sprites["lcorner"] = pixel.NewSprite(spritesheet, pixel.R(8, 16, 16, 24))
 
-	return &Snake{NextDirection: north, GrowNextUpdate: false, Sprites: sprites, Sections: sections}
+	return &Snake{NextDirection: north, GrowNextUpdate: false, Head: &sections[0], Sections: sections, Sprites: sprites}
 }
 
 // Update the snakes position
@@ -95,19 +97,43 @@ func (s *Snake) Update() {
 	if newSection != nil {
 		s.Sections = append(s.Sections, *newSection)
 		s.GrowNextUpdate = false
+		s.Head = &s.Sections[0]
 	}
 	s.Sections[len(s.Sections)-1].Direction = s.Sections[len(s.Sections)-2].Direction
-	s.Sections[0].Direction = s.NextDirection
-	switch s.Sections[0].Direction {
+	s.Head.Direction = s.NextDirection
+	switch s.Head.Direction {
 	case north:
-		s.Sections[0].Position = s.Sections[0].Position.Add(pixel.V(0.0, tileSize))
+		s.Head.Position = s.Head.Position.Add(pixel.V(0.0, tileSize))
 	case east:
-		s.Sections[0].Position = s.Sections[0].Position.Add(pixel.V(tileSize, 0.0))
+		s.Head.Position = s.Head.Position.Add(pixel.V(tileSize, 0.0))
 	case south:
-		s.Sections[0].Position = s.Sections[0].Position.Add(pixel.V(0.0, -tileSize))
+		s.Head.Position = s.Head.Position.Add(pixel.V(0.0, -tileSize))
 	case west:
-		s.Sections[0].Position = s.Sections[0].Position.Add(pixel.V(-tileSize, 0.0))
+		s.Head.Position = s.Head.Position.Add(pixel.V(-tileSize, 0.0))
 	}
+	// check if head is out of bounds, over an apple, or over itself
+	// bounds - check head position vs win.bounds
+	// apple - check head position vs apple position
+	// self - loop through section positions vs head position
+
+	// bounds check
+	if s.Head.Position.X > win.Bounds().Max.X ||
+		s.Head.Position.Y > win.Bounds().Max.Y ||
+		s.Head.Position.X < win.Bounds().Min.X ||
+		s.Head.Position.Y < win.Bounds().Min.Y {
+		fmt.Println("Game Over! (out of bounds)")
+	}
+
+	if s.Head.Position.X == apple.Position.X && s.Head.Position.Y == apple.Position.Y {
+		s.Eat()
+	}
+
+	for _, section := range s.Sections[1:] {
+		if s.Head.Position.X == section.Position.X && s.Head.Position.Y == section.Position.Y {
+			fmt.Println("Game Over! (suicide)")
+		}
+	}
+
 }
 
 // Render the snake
@@ -157,9 +183,9 @@ func (s *Snake) Render() {
 	s.Sprites["tail"].Draw(win, mat)
 
 	mat = pixel.IM
-	mat = mat.Rotated(pixel.ZV, float64(s.Sections[0].Direction)*math.Pi/2)
+	mat = mat.Rotated(pixel.ZV, float64(s.Head.Direction)*math.Pi/2)
 	mat = mat.ScaledXY(pixel.ZV, pixel.V(pixelScale, pixelScale))
-	mat = mat.Moved(s.Sections[0].Position)
+	mat = mat.Moved(s.Head.Position)
 	s.Sprites["head"].Draw(win, mat)
 }
 
@@ -174,6 +200,9 @@ func (s *Snake) Turn(direction int) {
 func (s *Snake) Eat() {
 	// check if there is an apple at the head location
 	// if so, eat it and add a section
+	fmt.Println("apple eaten!")
+	apple.Regen()
+	s.Grow()
 }
 
 func (s *Snake) Grow() {

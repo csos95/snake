@@ -72,6 +72,7 @@ func run() {
 		}
 
 		snake.Render()
+		apple.Render()
 
 		win.Update()
 	}
