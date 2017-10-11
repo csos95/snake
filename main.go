@@ -21,7 +21,7 @@ var (
 	tileSize         = 32.0
 	pixelScale       = 4.0
 	openSpots  []pixel.Vec
-	GameOver   bool
+	gameOver   bool
 )
 
 func run() {
@@ -75,10 +75,10 @@ func run() {
 		snake.Render()
 		apple.Render()
 
-		if GameOver {
+		if gameOver {
 			basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 4))
 			if win.JustPressed(pixelgl.KeyR) {
-				GameOver = false
+				gameOver = false
 				snake = NewSnake()
 				apple.Regen()
 				moveDelay = 300000000
