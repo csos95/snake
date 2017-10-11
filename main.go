@@ -28,7 +28,7 @@ var (
 func run() {
 	cfg := pixelgl.WindowConfig{
 		Title:  "Snake by Christopher Silva",
-		Bounds: pixel.R(-tileSize*12, -tileSize*12, tileSize*12, tileSize*12),
+		Bounds: pixel.R(-tileSize*12.5, -tileSize*12.5, tileSize*12.5, tileSize*12.5),
 		VSync:  true,
 	}
 

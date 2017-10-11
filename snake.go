@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/faiface/pixel"
@@ -115,7 +114,6 @@ func (s *Snake) Update() {
 		s.Head.Position.Y > win.Bounds().Max.Y ||
 		s.Head.Position.X < win.Bounds().Min.X ||
 		s.Head.Position.Y < win.Bounds().Min.Y {
-		fmt.Println("Game Over! (out of bounds)")
 		gameOver = true
 	}
 
@@ -127,7 +125,6 @@ func (s *Snake) Update() {
 	// suicide check
 	for _, section := range s.Sections[1:] {
 		if s.Head.Position.X == section.Position.X && s.Head.Position.Y == section.Position.Y {
-			fmt.Println("Game Over! (suicide)")
 			gameOver = true
 		}
 	}
@@ -196,9 +193,6 @@ func (s *Snake) Turn(direction int) {
 
 // Eat an apple
 func (s *Snake) Eat() {
-	// check if there is an apple at the head location
-	// if so, eat it and add a section
-	fmt.Println("apple eaten!")
 	apple.Regen()
 	s.Grow()
 	moveDelay = moveDelay - 5000000
