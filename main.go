@@ -36,7 +36,7 @@ func run() {
 
 	var background = colornames.Forestgreen
 	last := time.Now()
-	var moveDelay int64 = 500000000
+	var moveDelay int64 = 300000000
 	for !win.Closed() {
 		// dt = time.Since(last).Seconds()
 		// last = time.Now()
@@ -66,6 +66,9 @@ func run() {
 		}
 		if win.JustPressed(pixelgl.KeyEscape) {
 			win.SetClosed(true)
+		}
+		if win.JustPressed(pixelgl.KeyG) {
+			snake.Grow()
 		}
 
 		snake.Render()

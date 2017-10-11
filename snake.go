@@ -21,6 +21,25 @@ const (
 // north(1) + 2 % 4 = 3(south)
 // south(3) + 2 % 4 = 1(north)
 
+// what direction is to the right/left?
+/*
+	start north(1)
+	right is east(0) -1
+	left is west(2) +1
+
+	start east(0)
+	right is south(3) +3
+	left is north(1) +1
+
+	start south(3)
+	right is west(2) -1
+	left is east(0) -3
+
+	start west(2)
+	right is north(1) -1
+	left is south(3) +1
+*/
+
 type Section struct {
 	Position  pixel.Vec
 	Direction int
@@ -28,9 +47,10 @@ type Section struct {
 
 // Snake is the player character
 type Snake struct {
-	NextDirection int
-	Sections      []Section
-	Sprites       map[string]*pixel.Sprite
+	NextDirection  int
+	GrowNextUpdate bool
+	Sections       []Section
+	Sprites        map[string]*pixel.Sprite
 }
 
 // NewSnake creates the player character
@@ -51,10 +71,11 @@ func NewSnake() *Snake {
 
 	sprites["tail"] = pixel.NewSprite(spritesheet, pixel.R(0, 24, 8, 32))
 	sprites["straight"] = pixel.NewSprite(spritesheet, pixel.R(8, 24, 16, 32))
-	sprites["corner"] = pixel.NewSprite(spritesheet, pixel.R(16, 24, 24, 32))
+	sprites["rcorner"] = pixel.NewSprite(spritesheet, pixel.R(16, 24, 24, 32))
 	sprites["head"] = pixel.NewSprite(spritesheet, pixel.R(24, 24, 32, 32))
+	sprites["lcorner"] = pixel.NewSprite(spritesheet, pixel.R(8, 16, 16, 24))
 
-	return &Snake{NextDirection: north, Sprites: sprites, Sections: sections}
+	return &Snake{NextDirection: north, GrowNextUpdate: false, Sprites: sprites, Sections: sections}
 }
 
 // Update the snakes position
@@ -63,9 +84,17 @@ func (s *Snake) Update() {
 	// each sections gets the position and direction of the section ahead of it
 	// the head section gets position infront of it
 	// check if head intersects apple, if so eat it
+	var newSection *Section
+	if s.GrowNextUpdate {
+		newSection = &Section{Position: s.Sections[len(s.Sections)-1].Position, Direction: s.Sections[len(s.Sections)-1].Direction}
+	}
 	for i := len(s.Sections) - 1; i > 0; i-- {
 		s.Sections[i].Position = s.Sections[i-1].Position
 		s.Sections[i].Direction = s.Sections[i-1].Direction
+	}
+	if newSection != nil {
+		s.Sections = append(s.Sections, *newSection)
+		s.GrowNextUpdate = false
 	}
 	s.Sections[len(s.Sections)-1].Direction = s.Sections[len(s.Sections)-2].Direction
 	s.Sections[0].Direction = s.NextDirection
@@ -90,7 +119,33 @@ func (s *Snake) Render() {
 		mat = mat.ScaledXY(pixel.ZV, pixel.V(pixelScale, pixelScale))
 		mat = mat.Moved(s.Sections[i].Position)
 		if s.Sections[i].Direction != s.Sections[i-1].Direction {
-			s.Sprites["corner"].Draw(win, mat)
+			// todo: refactor this to not be so big
+			switch s.Sections[i].Direction {
+			case north:
+				if s.Sections[i-1].Direction == east {
+					s.Sprites["rcorner"].Draw(win, mat)
+				} else {
+					s.Sprites["lcorner"].Draw(win, mat)
+				}
+			case east:
+				if s.Sections[i-1].Direction == south {
+					s.Sprites["rcorner"].Draw(win, mat)
+				} else {
+					s.Sprites["lcorner"].Draw(win, mat)
+				}
+			case south:
+				if s.Sections[i-1].Direction == west {
+					s.Sprites["rcorner"].Draw(win, mat)
+				} else {
+					s.Sprites["lcorner"].Draw(win, mat)
+				}
+			case west:
+				if s.Sections[i-1].Direction == north {
+					s.Sprites["rcorner"].Draw(win, mat)
+				} else {
+					s.Sprites["lcorner"].Draw(win, mat)
+				}
+			}
 		} else {
 			s.Sprites["straight"].Draw(win, mat)
 		}
@@ -119,4 +174,8 @@ func (s *Snake) Turn(direction int) {
 func (s *Snake) Eat() {
 	// check if there is an apple at the head location
 	// if so, eat it and add a section
+}
+
+func (s *Snake) Grow() {
+	s.GrowNextUpdate = true
 }
