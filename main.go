@@ -43,6 +43,7 @@ func run() {
 	basicAtlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
 	basicTxt := text.New(pixel.V(-124.0, 0.0), basicAtlas)
 	fmt.Fprintln(basicTxt, "Game Over")
+	fmt.Fprintln(basicTxt, "[R]etry?")
 
 	var background = colornames.Forestgreen
 	last := time.Now()
@@ -76,6 +77,12 @@ func run() {
 
 		if GameOver {
 			basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 4))
+			if win.JustPressed(pixelgl.KeyR) {
+				GameOver = false
+				snake = NewSnake()
+				apple.Regen()
+				moveDelay = 300000000
+			}
 		}
 
 		win.Update()
