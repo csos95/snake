@@ -23,6 +23,9 @@ var (
 	pixelScale        = 4.0
 	openSpots   []pixel.Vec
 	gameOver    bool
+	score       = 0
+	basicAtlas  *text.Atlas
+	scoreTxt    *text.Text
 )
 
 func run() {
@@ -46,10 +49,12 @@ func run() {
 	snake = NewSnake()
 	apple = NewApple()
 
-	basicAtlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
-	basicTxt := text.New(pixel.V(-124.0, 0.0), basicAtlas)
-	fmt.Fprintln(basicTxt, "Game Over")
-	fmt.Fprintln(basicTxt, "[R]etry?")
+	basicAtlas = text.NewAtlas(basicfont.Face7x13, text.ASCII)
+	gameoverTxt := text.New(pixel.V(-124.0, 0.0), basicAtlas)
+	fmt.Fprintln(gameoverTxt, "Game Over")
+	fmt.Fprintln(gameoverTxt, "[R]etry?")
+	scoreTxt = text.New(pixel.V(-tileSize*12.5+13.0, tileSize*12.5-39.0), basicAtlas)
+	fmt.Fprint(scoreTxt, fmt.Sprintf("Score: %d", score))
 
 	var background = colornames.Forestgreen
 	last := time.Now()
@@ -80,9 +85,10 @@ func run() {
 
 		snake.Render()
 		apple.Render()
+		scoreTxt.Draw(win, pixel.IM.Scaled(scoreTxt.Orig, 3))
 
 		if gameOver {
-			basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 4))
+			gameoverTxt.Draw(win, pixel.IM.Scaled(gameoverTxt.Orig, 4))
 			if win.JustPressed(pixelgl.KeyR) {
 				gameOver = false
 				snake = NewSnake()

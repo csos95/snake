@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/text"
 )
 
 const (
@@ -193,6 +195,9 @@ func (s *Snake) Turn(direction int) {
 
 // Eat an apple
 func (s *Snake) Eat() {
+	score++
+	scoreTxt = text.New(pixel.V(-tileSize*12.5+13.0, tileSize*12.5-39.0), basicAtlas)
+	fmt.Fprint(scoreTxt, fmt.Sprintf("Score: %d", score))
 	apple.Regen()
 	s.Grow()
 	moveDelay = moveDelay - 5000000
